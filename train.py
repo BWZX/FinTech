@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from torch import nn
 from torch.autograd import Variable
+import tushare as ts
 
 from reader import StockHistory
 from model import RNN
@@ -42,10 +43,11 @@ if __name__ == '__main__':
     rnn.cuda()
 
     optimizer = torch.optim.Adam(rnn.parameters(), lr=cfg.lr)
-
     criterion = nn.MSELoss()
 
-    ds = StockHistory("600000",
+    stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+
+    ds = StockHistory(stock_list,
                       start="2010-01-01",
                       end="2017-05-31",
                       input_columns=columns,
