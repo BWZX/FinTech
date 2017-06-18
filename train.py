@@ -44,7 +44,11 @@ if __name__ == '__main__':
 
     criterion = nn.MSELoss()
 
-    ds = StockHistory("600000", start="2010-01-01", end="2017-05-31", columns=columns)
+    ds = StockHistory("600000",
+                      start="2010-01-01",
+                      end="2017-05-31",
+                      input_columns=columns,
+                      pred_column="close")
 
     loss_ary = []
     for epoch in range(1, cfg.epoch + 1):

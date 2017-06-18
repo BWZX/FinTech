@@ -2,7 +2,6 @@ import tushare as ts
 
 from abc import abstractmethod, ABCMeta
 import six
-import pdb
 
 from torch.autograd import Variable
 import torch
@@ -52,36 +51,41 @@ class RNGDataFlow(DataFlow):
 
 
 class StockHistory(DataFlow):
-    def __init__(self, stock_list, start, end, columns=["close"], seq_len=25, batch_size=1):
+    def __init__(self, stock_list, start, end, input_columns=["close"], pred_column="close", seq_len=25, batch_size=1):
         if isinstance(stock_list, list) == False:
             stock_list = [stock_list]
         self.stock_list = stock_list
         self.start = start
         self.end = end
-        if isinstance(columns, list) == False:
-            columns=columns.split(',')
-        self.columns=columns
+        if isinstance(input_columns, list) == False:
+            input_columns = input_columns.split(',')
+        self.input_columns = input_columns
+        self.pred_column = pred_column
         self.seq_len=seq_len
         self.batch_size=batch_size
 
         # get data and save with pickle
-        self.seq_list = []
+        self.input_list = []
+        self.label_list = []
         for stock in stock_list:
             stock_data = ts.get_k_data(stock, start=start, end=end)
-            target_data = stock_data[columns].as_matrix()
-            self.seq_list.append(target_data)
+            input_data = stock_data[input_columns].as_matrix()
+            label_data = stock_data[pred_column].as_matrix()
+            self.input_list.append(input_data)
+            self.label_list.append(label_data)
 
 
     def get_data(self):
 
-        for seq in self.seq_list:
+        for idx, input_seq in enumerate(self.input_list):
             reset = True
             idx = 0
+            label_seq = self.label_list[idx]
             while True:
-                if (idx + self.seq_len + 1 >= seq.shape[0]):
+                if (idx + self.seq_len + 1 >= input_seq.shape[0]):
                     break
-                input = Variable(torch.FloatTensor(seq[idx: idx + self.seq_len]))
-                label = Variable(torch.FloatTensor(seq[idx + 1: idx + self.seq_len + 1]))
+                input = Variable(torch.FloatTensor(input_seq[idx: idx + self.seq_len]))
+                label = Variable(torch.FloatTensor(label_seq[idx + 1: idx + self.seq_len + 1]))
                 input = input.unsqueeze(1)
                 label = label.unsqueeze(1)
                 yield ([input, label], reset)

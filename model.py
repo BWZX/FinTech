@@ -10,8 +10,6 @@ class RNN(nn.Module):
         self.output_size = output_size
         self.n_layers = n_layers
 
-        # self.encoder = nn.Embedding(input_size, hidden_size)
-        # self.encoder = nn.Linear(input_size, hidden_size)
         self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.n_layers)
         self.decoder = nn.Linear(self.hidden_size, self.output_size)
 
