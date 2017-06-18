@@ -84,8 +84,8 @@ class StockHistory(DataFlow):
             while True:
                 if (idx + self.seq_len + 1 >= input_seq.shape[0]):
                     break
-                input = Variable(torch.FloatTensor(input_seq[idx: idx + self.seq_len]))
-                label = Variable(torch.FloatTensor(label_seq[idx + 1: idx + self.seq_len + 1]))
+                input = Variable(torch.FloatTensor(input_seq[idx: idx + self.seq_len]).cuda())
+                label = Variable(torch.FloatTensor(label_seq[idx + 1: idx + self.seq_len + 1]).cuda())
                 input = input.unsqueeze(1)
                 label = label.unsqueeze(1)
                 yield ([input, label], reset)

@@ -26,7 +26,7 @@ class RNN(nn.Module):
         return output, h_c
 
     def init_hidden_cell(self):
-        hidden =  Variable(torch.zeros(self.n_layers, 1, self.hidden_size))
-        cell = Variable(torch.zeros(self.n_layers, 1, self.hidden_size))
+        hidden =  Variable(torch.zeros(self.n_layers, 1, self.hidden_size).cuda())
+        cell = Variable(torch.zeros(self.n_layers, 1, self.hidden_size).cuda())
         return (hidden, cell)
 
