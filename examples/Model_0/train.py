@@ -45,7 +45,8 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(rnn.parameters(), lr=cfg.lr)
     criterion = nn.MSELoss()
 
-    stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+    # stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+    stock_list = ["600000"]
 
     ds = StockHistory(stock_list,
                       start="2010-01-01",

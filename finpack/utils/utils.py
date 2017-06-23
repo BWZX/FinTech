@@ -1,6 +1,11 @@
 import os
 import numpy as np
+from datetime import datetime
 
+__all__ = ['get_rng']
+
+
+_RNG_SEED = None
 
 def get_rng(obj=None):
     """
