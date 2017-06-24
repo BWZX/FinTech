@@ -10,6 +10,7 @@ from torch.autograd import Variable
 import torch
 
 from finpack import *
+from finpack.utils import logger
 
 data_dir = "data"
 data_files = os.listdir(data_dir)
@@ -53,6 +54,13 @@ class StockHistory(DataFlow):
             self.input_list.append(input_data)
             self.label_list.append(label_data)
 
+    def size(self):
+        data_size = 0
+        for seq in self.input_list:
+            cur_data_size = (seq.shape[0] - 1) // self.seq_len
+            data_size += cur_data_size
+        return data_size
+
     def get_data(self):
 
         for idx, input_seq in enumerate(self.input_list):
@@ -60,7 +68,7 @@ class StockHistory(DataFlow):
             label_seq = self.label_list[idx]
             sub_idx = 0
             while True:
-                if (sub_idx + self.seq_len + 1 >= input_seq.shape[0]):
+                if (sub_idx + self.seq_len + 1 > input_seq.shape[0]):
                     break
                 input = Variable(torch.FloatTensor(input_seq[sub_idx: sub_idx + self.seq_len]).cuda())
                 label = Variable(torch.FloatTensor(label_seq[sub_idx + 1: sub_idx + self.seq_len + 1]).cuda())
