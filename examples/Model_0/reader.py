@@ -1,11 +1,29 @@
 import tushare as ts
+import os
+import pickle
 from abc import abstractmethod, ABCMeta
 import six
+
+import pdb
 
 from torch.autograd import Variable
 import torch
 
 from finpack import *
+
+data_dir = "data"
+data_files = os.listdir(data_dir)
+filename_dict = {}
+for data_file in data_files:
+    code = data_file.split('_')[0]
+    filename_dict[code] = os.path.join(data_dir, data_file)
+
+def get_data_by_code(code):
+    filepath = filename_dict[code]
+    with open(filepath, 'rb') as f:
+        data = pickle.load(f)
+    return data
+
 
 class StockHistory(DataFlow):
     def __init__(self, stock_list, start, end, input_columns=["close"], pred_column="close", seq_len=25, batch_size=1):
@@ -25,7 +43,8 @@ class StockHistory(DataFlow):
         self.input_list = []
         self.label_list = []
         for stock in stock_list:
-            stock_data = ts.get_k_data(stock, start=start, end=end)
+            # stock_data = ts.get_k_data(stock, start=start, end=end)
+            stock_data = get_data_by_code(stock)
             input_data = stock_data[input_columns].as_matrix()
             label_data = stock_data[pred_column].as_matrix()
             self.input_list.append(input_data)
@@ -48,4 +67,23 @@ class StockHistory(DataFlow):
                 yield ([input, label], reset)
                 idx += self.seq_len
                 reset = False
+
+if __name__ == "__main__":
+    data_dir = "data"
+
+    stock_list = ts.get_stock_basics()
+    stock_list = stock_list.index.tolist()
+
+    tot_count = 0
+
+    for code in stock_list:
+        print(code)
+        cur_data = ts.get_k_data(code, start="2000-01-01", end="2017-05-31")
+        count = cur_data.shape[0]
+        tot_count += count
+        with open(os.path.join(data_dir, code + "_" + str(count)), 'wb') as f:
+            pickle.dump(cur_data, f)
+
+    print("Number of data points: " + str(tot_count))
+
 
