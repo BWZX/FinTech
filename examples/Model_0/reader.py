@@ -48,10 +48,13 @@ class StockHistory(DataFlow):
         self.label_list = []
         for stock in tqdm(stock_list, ascii=True, desc="Loading Data"):
             # stock_data = ts.get_k_data(stock, start=start, end=end)
-            # print("Get stock data: " + str(stock))
             stock_data = get_data_by_code(stock, start, end)
-            input_data = stock_data[input_columns].as_matrix()
-            label_data = stock_data[pred_column].as_matrix()
+            input_raw_data = stock_data[input_columns].as_matrix()
+            label_raw_data = stock_data[pred_column].as_matrix()
+
+            pdb.set_trace()
+
+
             self.input_list.append(input_data)
             self.label_list.append(label_data)
 
