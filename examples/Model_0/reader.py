@@ -18,10 +18,13 @@ for data_file in data_files:
     code = data_file.split('_')[0]
     filename_dict[code] = os.path.join(data_dir, data_file)
 
-def get_data_by_code(code):
+def get_data_by_code(code, start, end):
     filepath = filename_dict[code]
     with open(filepath, 'rb') as f:
         data = pickle.load(f)
+    start = data['date'] >= start
+    end = data['date'] <= end
+    data = data[start & end]
     return data
 
 
@@ -39,33 +42,32 @@ class StockHistory(DataFlow):
         self.seq_len=seq_len
         self.batch_size=batch_size
 
-        # get data and save with pickle
         self.input_list = []
         self.label_list = []
         for stock in stock_list:
             # stock_data = ts.get_k_data(stock, start=start, end=end)
-            stock_data = get_data_by_code(stock)
+            print("Get stock data: " + str(stock))
+            stock_data = get_data_by_code(stock, start, end)
             input_data = stock_data[input_columns].as_matrix()
             label_data = stock_data[pred_column].as_matrix()
             self.input_list.append(input_data)
             self.label_list.append(label_data)
 
-
     def get_data(self):
 
         for idx, input_seq in enumerate(self.input_list):
             reset = True
-            idx = 0
             label_seq = self.label_list[idx]
+            sub_idx = 0
             while True:
-                if (idx + self.seq_len + 1 >= input_seq.shape[0]):
+                if (sub_idx + self.seq_len + 1 >= input_seq.shape[0]):
                     break
-                input = Variable(torch.FloatTensor(input_seq[idx: idx + self.seq_len]).cuda())
-                label = Variable(torch.FloatTensor(label_seq[idx + 1: idx + self.seq_len + 1]).cuda())
+                input = Variable(torch.FloatTensor(input_seq[sub_idx: sub_idx + self.seq_len]).cuda())
+                label = Variable(torch.FloatTensor(label_seq[sub_idx + 1: sub_idx + self.seq_len + 1]).cuda())
                 input = input.unsqueeze(1)
                 label = label.unsqueeze(1)
                 yield ([input, label], reset)
-                idx += self.seq_len
+                sub_idx += self.seq_len
                 reset = False
 
 if __name__ == "__main__":

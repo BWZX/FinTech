@@ -8,6 +8,8 @@ from reader import StockHistory
 from model import RNN
 from cfgs.config import cfg
 
+import pdb
+
 def train_epoch():
 
     loss_ary = []
@@ -21,6 +23,7 @@ def train_epoch():
         optimizer.zero_grad()
 
         output, (hidden, cell) = rnn(input, hidden, cell)
+        # pdb.set_trace()
         loss = criterion(output, label)
 
         loss_ary.append(loss.data[0])
@@ -45,8 +48,8 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(rnn.parameters(), lr=cfg.lr)
     criterion = nn.MSELoss()
 
-    # stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
-    stock_list = ["600000"]
+    stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+    # stock_list = ["600000"]
 
     ds = StockHistory(stock_list,
                       start="2010-01-01",
