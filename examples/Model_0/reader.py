@@ -1,4 +1,5 @@
 import tushare as ts
+from tqdm import tqdm
 import os
 import pickle
 from abc import abstractmethod, ABCMeta
@@ -45,9 +46,9 @@ class StockHistory(DataFlow):
 
         self.input_list = []
         self.label_list = []
-        for stock in stock_list:
+        for stock in tqdm(stock_list, ascii=True, desc="Loading Data"):
             # stock_data = ts.get_k_data(stock, start=start, end=end)
-            print("Get stock data: " + str(stock))
+            # print("Get stock data: " + str(stock))
             stock_data = get_data_by_code(stock, start, end)
             input_data = stock_data[input_columns].as_matrix()
             label_data = stock_data[pred_column].as_matrix()

@@ -1,4 +1,5 @@
 import torch
+from termcolor import colored
 import numpy as np
 from tqdm import tqdm
 from torch import nn
@@ -46,6 +47,11 @@ if __name__ == '__main__':
     columns = "open,close,high,low".split(',')
 
     rnn = RNN(len(columns), cfg.hidden_size, cfg.output_size, cfg.n_layers)
+
+    logger.info(colored("Model Parameters:", 'cyan'))
+    logger.info(rnn)
+
+
     rnn.cuda()
 
     optimizer = torch.optim.Adam(rnn.parameters(), lr=cfg.lr)
