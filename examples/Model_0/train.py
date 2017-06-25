@@ -11,27 +11,28 @@ from model import RNN
 from cfgs.config import cfg
 
 from finpack.utils import logger
+from finpack import *
 
 import pdb
 
 def train_epoch():
 
-    loss_ary = []
+    ds.reset_state()
 
+    loss_ary = []
     for dp in tqdm(ds.get_data(), total=ds.size(), ascii=True):
+
         # one step
         [input, label] = dp
 
         input = Variable(torch.FloatTensor(input).cuda())
         label = Variable(torch.FloatTensor(label).cuda())
 
-        hidden, cell = rnn.init_hidden_cell()
-
         optimizer.zero_grad()
 
-        output, (hidden, cell) = rnn(input, hidden, cell)
+        output, (hidden, cell) = rnn(input)
 
-        loss = criterion(output[-1], label)
+        loss = criterion(output[:,-1], label)
 
         loss_ary.append(loss.data[0])
 
@@ -65,6 +66,8 @@ if __name__ == '__main__':
                       end="2017-05-31",
                       input_columns=columns,
                       pred_column="close")
+
+    ds = BatchData(ds, 1024, stack_dim=0)
 
     loss_ary = []
     for epoch in range(1, cfg.epoch + 1):

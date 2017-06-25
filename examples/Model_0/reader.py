@@ -31,8 +31,8 @@ def get_data_by_code(code, start, end):
     return data
 
 
-class StockHistory(DataFlow):
-    def __init__(self, stock_list, start, end, input_columns=["close"], pred_column="close", seq_len=25, batch_size=1):
+class StockHistory(RNGDataFlow):
+    def __init__(self, stock_list, start, end, input_columns=["close"], pred_column="close", seq_len=25, shuffle=True):
         if isinstance(stock_list, list) == False:
             stock_list = [stock_list]
         self.stock_list = stock_list
@@ -42,8 +42,8 @@ class StockHistory(DataFlow):
             input_columns = input_columns.split(',')
         self.input_columns = input_columns
         self.pred_column = pred_column
-        self.seq_len=seq_len
-        self.batch_size=batch_size
+        self.seq_len = seq_len
+        self.shuffle = shuffle
 
         self.input_list = []
         self.label_list = []
@@ -59,8 +59,8 @@ class StockHistory(DataFlow):
                 cur_input = input_data[step: step + seq_len]
                 cur_label = label_data[step + seq_len]
 
-                cur_input = np.expand_dims(cur_input, 1)
-                cur_label = np.expand_dims(cur_label, 1)
+                cur_input = np.expand_dims(cur_input, 0)
+                cur_label = np.expand_dims(cur_label, 0)
 
                 self.input_list.append(cur_input)
                 self.label_list.append(cur_label)
@@ -69,8 +69,11 @@ class StockHistory(DataFlow):
         return len(self.input_list)
 
     def get_data(self):
-        for idx, input_seq in enumerate(self.input_list):
-            yield [input_seq, self.label_list[idx]]
+        idxs = np.arange(len(self.input_list))
+        if self.shuffle == True:
+            self.rng.shuffle(idxs)
+        for k in idxs:
+            yield [self.input_list[k], self.label_list[k]]
 
 if __name__ == "__main__":
     data_dir = "data"
