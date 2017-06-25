@@ -1,4 +1,5 @@
 import tushare as ts
+import numpy as np
 from tqdm import tqdm
 import os
 import pickle
@@ -49,38 +50,27 @@ class StockHistory(DataFlow):
         for stock in tqdm(stock_list, ascii=True, desc="Loading Data"):
             # stock_data = ts.get_k_data(stock, start=start, end=end)
             stock_data = get_data_by_code(stock, start, end)
-            input_raw_data = stock_data[input_columns].as_matrix()
-            label_raw_data = stock_data[pred_column].as_matrix()
+            input_data = stock_data[input_columns].as_matrix()
+            label_data = stock_data[pred_column].as_matrix()
 
-            pdb.set_trace()
+            length = input_data.shape[0]
 
+            for step in range(length - seq_len - 1):
+                cur_input = input_data[step: step + seq_len]
+                cur_label = label_data[step + seq_len]
 
-            self.input_list.append(input_data)
-            self.label_list.append(label_data)
+                cur_input = np.expand_dims(cur_input, 1)
+                cur_label = np.expand_dims(cur_label, 1)
+
+                self.input_list.append(cur_input)
+                self.label_list.append(cur_label)
 
     def size(self):
-        data_size = 0
-        for seq in self.input_list:
-            cur_data_size = (seq.shape[0] - 1) // self.seq_len
-            data_size += cur_data_size
-        return data_size
+        return len(self.input_list)
 
     def get_data(self):
-
         for idx, input_seq in enumerate(self.input_list):
-            reset = True
-            label_seq = self.label_list[idx]
-            sub_idx = 0
-            while True:
-                if (sub_idx + self.seq_len + 1 > input_seq.shape[0]):
-                    break
-                input = Variable(torch.FloatTensor(input_seq[sub_idx: sub_idx + self.seq_len]).cuda())
-                label = Variable(torch.FloatTensor(label_seq[sub_idx + 1: sub_idx + self.seq_len + 1]).cuda())
-                input = input.unsqueeze(1)
-                label = label.unsqueeze(1)
-                yield ([input, label], reset)
-                sub_idx += self.seq_len
-                reset = False
+            yield [input_seq, self.label_list[idx]]
 
 if __name__ == "__main__":
     data_dir = "data"

@@ -18,22 +18,22 @@ def train_epoch():
 
     loss_ary = []
 
-    for dp, reset in tqdm(ds.get_data(), total=ds.size(), ascii=True):
+    for dp in tqdm(ds.get_data(), total=ds.size(), ascii=True):
         # one step
         [input, label] = dp
-        if reset is True:
-            hidden, cell = rnn.init_hidden_cell()
+
+        input = Variable(torch.FloatTensor(input).cuda())
+        label = Variable(torch.FloatTensor(label).cuda())
+
+        hidden, cell = rnn.init_hidden_cell()
 
         optimizer.zero_grad()
 
         output, (hidden, cell) = rnn(input, hidden, cell)
-        # pdb.set_trace()
-        loss = criterion(output, label)
+
+        loss = criterion(output[-1], label)
 
         loss_ary.append(loss.data[0])
-
-        hidden = Variable(hidden.data.cuda())
-        cell = Variable(cell.data.cuda())
 
         loss.backward()
         optimizer.step()
