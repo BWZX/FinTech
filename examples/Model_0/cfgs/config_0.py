@@ -8,5 +8,5 @@ cfg.epoch = 200
 cfg.hidden_size = 100
 cfg.n_layers = 1
 cfg.output_size = 1
-cfg.lr = 5e-3
+cfg.lr = 1e-3
 

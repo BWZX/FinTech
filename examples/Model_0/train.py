@@ -60,7 +60,7 @@ if __name__ == '__main__':
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
 
-    ds = StockHistory(stock_list[0:10],
+    ds = StockHistory(stock_list,
                       start="2010-01-01",
                       end="2017-05-31",
                       input_columns=columns,
