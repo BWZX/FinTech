@@ -1,6 +1,6 @@
 from ..callbacks import (Callbacks, ProgressBar)
 from ..dataflow.base import DataFlow
-from ..models import ModelDesc
+# from ..models import ModelDesc
 from ..utils import logger
 
 __all__ = ['TrainConfig']
@@ -44,7 +44,7 @@ class TrainConfig(object):
         # self.monitors = [SummaryWriter(), JSONWriter(), ScalarPrinter()]
 
         self.model = model
-        assert_type(self.model, ModelDesc)
+        # assert_type(self.model, ModelDesc)
 
         steps_per_epoch = self.dataflow.size()
 
