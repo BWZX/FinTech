@@ -42,6 +42,12 @@ class Callback(object):
         # self._steps_per_epoch = trainer.config.steps_per_epoch
         # self.trainer = trainer
 
+    def before_epoch(self):
+        self._before_epoch()
+
+    def _before_epoch(self):
+        pass
+
     def trigger_step(self):
         self._trigger_step()
 

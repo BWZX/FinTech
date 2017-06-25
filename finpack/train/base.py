@@ -92,6 +92,7 @@ class Trainer(object):
             self._starting_step = self.global_step
             for self.epoch_num in range(
                     self.config.starting_epoch, self.config.max_epoch + 1):
+                self._callbacks.before_epoch()
                 logger.info("Start Epoch {} ...".format(self.epoch_num))
                 start_time = time.time()
                 for self.local_step in range(self.config.steps_per_epoch):

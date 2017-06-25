@@ -23,18 +23,9 @@ class ProgressBar(Callback):
         self._total = self.trainer.config.steps_per_epoch
         self._tqdm_args = get_tqdm_kwargs(leave=True)
 
-    def _before_run(self, _):
-        # update progress bar when local step changed (one step is finished)
-        if self.local_step != self._last_updated:
-            self._last_updated = self.local_step
-
-            if self.local_step == 0:
-                self._bar = tqdm.trange(self._total, **self._tqdm_args)
-
-        return None
-
-    def _after_run(self, _, run_values):
-        pass
+    def _before_epoch(self):
+        if self.local_step == 0:
+            self._bar = tqdm.trange(self._total, **self._tqdm_args)
 
     def _trigger_step(self):
         self._bar.update()

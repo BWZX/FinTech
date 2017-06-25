@@ -70,6 +70,10 @@ class Callbacks(Callback):
         for cb in self.cbs:
             cb.before_train()
 
+    def _before_epoch(self):
+        for cb in self.cbs:
+            cb.before_epoch()
+
     def _after_train(self):
         for cb in self.cbs:
             # make sure callbacks are properly finalized
