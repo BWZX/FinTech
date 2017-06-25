@@ -63,9 +63,6 @@ class Callbacks(Callback):
         self.cbs = cbs
 
     def _setup_graph(self):
-        print("BBBBBBBBBBBBBB")
-        print("BBBBBBBBBBBBBB")
-        print("BBBBBBBBBBBBBB")
         for cb in self.cbs:
             cb.setup_graph(self.trainer)
 

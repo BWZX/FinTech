@@ -27,11 +27,12 @@ class Callback(object):
     """
 
     def setup_graph(self, trainer):
-        print("AAAAAAAAAAAAAAAAAAAAA")
-        print("AAAAAAAAAAAAAAAAAAAAA")
-        print("AAAAAAAAAAAAAAAAAAAAA")
         self._steps_per_epoch = trainer.config.steps_per_epoch
         self.trainer = trainer
+        self._setup_graph()
+
+    def _setup_graph(self):
+        pass
 
     def before_train(self):
         self._before_train()

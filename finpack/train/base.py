@@ -57,9 +57,6 @@ class Trainer(object):
         pass
 
     def setup(self):
-        print("CCCCCCCCCCCCCCC")
-        print("CCCCCCCCCCCCCCC")
-        print("CCCCCCCCCCCCCCC")
         """
         Setup the trainer and be ready for the main loop.
         """
@@ -71,7 +68,7 @@ class Trainer(object):
         describe_model(self.model)
 
         # some final operations that might modify the graph
-        logger.info("Setup callbacks graph ...")
+        logger.info("Setup callbacks ...")
         self._callbacks = Callbacks(self._callbacks)
         self._callbacks.setup_graph(weakref.proxy(self))
 

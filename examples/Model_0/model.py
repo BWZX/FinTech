@@ -43,6 +43,8 @@ class Model():
     def __init__(self):
         self.module = RNN(len(cfg.predictors), cfg.hidden_size, cfg.output_size, cfg.n_layers)
         self.module.cuda()
+        self.criterion = nn.MSELoss()
+        self.criterion.cuda()
 
     def get_inputs(self):
         return [torch.FloatTensor, torch.FloatTensor]
@@ -51,7 +53,8 @@ class Model():
         [input, label] = inputs
 
         output, (hidden, cell) = self.module(input)
-        self.cost = criterion(output[:,-1], label)
+
+        self.cost = self.criterion(output[:,-1], label)
 
     def get_optimizer(self):
         return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
