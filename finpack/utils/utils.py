@@ -2,6 +2,9 @@ import os
 import sys
 import numpy as np
 from datetime import datetime
+from termcolor import colored
+
+from . import logger
 
 __all__ = ['get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm']
 
@@ -24,7 +27,8 @@ def get_rng(obj=None):
     return np.random.RandomState(seed)
 
 def describe_model(model):
-    pass
+    logger.info(colored("Model Parameters:", 'cyan'))
+    print(model.module)
 
 
 def get_tqdm_kwargs(**kwargs):

@@ -3,6 +3,8 @@ import tqdm
 from ..utils import logger, get_tqdm_kwargs
 from .base import Callback
 
+import pdb
+
 __all__ = ['ProgressBar']
 
 class ProgressBar(Callback):
@@ -19,13 +21,14 @@ class ProgressBar(Callback):
 
     def _before_train(self):
         self._last_updated = self.local_step
-
         self._total = self.trainer.config.steps_per_epoch
         self._tqdm_args = get_tqdm_kwargs(leave=True)
 
+
     def _before_epoch(self):
-        if self.local_step == 0:
-            self._bar = tqdm.trange(self._total, **self._tqdm_args)
+        self._bar = tqdm.trange(self._total, **self._tqdm_args)
+        # if self.local_step == 0:
+        #     self._bar = tqdm.trange(self._total, **self._tqdm_args)
 
     def _trigger_step(self):
         self._bar.update()

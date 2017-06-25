@@ -46,7 +46,8 @@ class StockHistory(RNGDataFlow):
 
         self.input_list = []
         self.label_list = []
-        for stock in tqdm(stock_list, ascii=True, desc="Loading Data"):
+        logger.info("Loading Data")
+        for stock in tqdm(stock_list, ascii=True):
             # stock_data = ts.get_k_data(stock, start=start, end=end)
             stock_data = get_data_by_code(stock, start, end)
             input_data = stock_data[cfg.predictors].as_matrix()
