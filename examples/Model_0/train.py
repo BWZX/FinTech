@@ -64,7 +64,6 @@ if __name__ == '__main__':
     ds = StockHistory(stock_list,
                       start="2010-01-01",
                       end="2017-05-31",
-                      input_columns=columns,
                       pred_column="close")
 
     ds = BatchData(ds, 1024, stack_dim=0)

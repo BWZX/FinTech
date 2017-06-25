@@ -32,15 +32,12 @@ def get_data_by_code(code, start, end):
 
 
 class StockHistory(RNGDataFlow):
-    def __init__(self, stock_list, start, end, input_columns=["close"], pred_column="close", seq_len=25, shuffle=True):
+    def __init__(self, stock_list, start, end, pred_column="close", seq_len=25, shuffle=True):
         if isinstance(stock_list, list) == False:
             stock_list = [stock_list]
         self.stock_list = stock_list
         self.start = start
         self.end = end
-        if isinstance(input_columns, list) == False:
-            input_columns = input_columns.split(',')
-        self.input_columns = input_columns
         self.pred_column = pred_column
         self.seq_len = seq_len
         self.shuffle = shuffle
@@ -50,7 +47,7 @@ class StockHistory(RNGDataFlow):
         for stock in tqdm(stock_list, ascii=True, desc="Loading Data"):
             # stock_data = ts.get_k_data(stock, start=start, end=end)
             stock_data = get_data_by_code(stock, start, end)
-            input_data = stock_data[input_columns].as_matrix()
+            input_data = stock_data[cfg.predictors].as_matrix()
             label_data = stock_data[pred_column].as_matrix()
 
             length = input_data.shape[0]

@@ -1,3 +1,5 @@
+import argparse
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -31,3 +33,45 @@ class RNN(nn.Module):
         output = output.view(batch_size, seq_len, self.output_size)
         return output, h_c
 
+class Model():
+    def __init__(self):
+        self.module = RNN(len(cfg.columns), cfg.hidden_size, cfg.output_size, cfg.n_layers)
+        self.module.cuda()
+
+    def get_inputs(self):
+        return [torch.FloatTensor, torch.FloatTensor]
+
+    def run_graph(self, inputs):
+        [input, label] = inputs
+
+        output, (hidden, cell) = self.module(input)
+        self.cost = criterion(output[:,-1], label)
+
+    def get_optimizer(self):
+        return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
+
+def get_config(args):
+    ds_train = StockHistory(stock_list,
+                            start="2010-01-01",
+                            end="2017-05-31",
+                            pred_column="close")
+
+    ds = BatchData(ds, args.batch_size)
+
+    callbacks = []
+
+    return TrainConfig(
+        dataflow=ds_train,
+        callbacks=callbacks,
+        model=Model(),
+        max_epoch=160,
+    )
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--batch_size', help='batch size')
+    args = parser.parse_args()
+
+    config = get_config(args)
+    SimpleTrainer(config).train()
