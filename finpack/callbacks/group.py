@@ -3,7 +3,7 @@ import time
 import traceback
 
 from .base import Callback
-from .stats import StatPrinter
+# from .stats import StatPrinter
 from ..utils import logger
 
 __all__ = ['Callbacks']

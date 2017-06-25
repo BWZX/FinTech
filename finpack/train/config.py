@@ -46,7 +46,7 @@ class TrainConfig(object):
         self.model = model
         # assert_type(self.model, ModelDesc)
 
-        steps_per_epoch = self.dataflow.size()
+        self.steps_per_epoch = self.dataflow.size()
 
         self.starting_epoch = int(starting_epoch)
         self.max_epoch = int(max_epoch)

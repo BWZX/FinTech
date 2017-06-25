@@ -1,7 +1,6 @@
 from .base import Trainer
 
 from ..utils import logger
-from .input_source import FeedInput
 
 from torch.autograd import Variable
 

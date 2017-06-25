@@ -14,6 +14,8 @@ import torch
 from finpack import *
 from finpack.utils import logger
 
+from cfgs.config import cfg
+
 data_dir = "data"
 data_files = os.listdir(data_dir)
 filename_dict = {}

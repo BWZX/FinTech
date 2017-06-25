@@ -2,7 +2,7 @@ import os
 import numpy as np
 from datetime import datetime
 
-__all__ = ['get_rng']
+__all__ = ['get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm']
 
 
 _RNG_SEED = None

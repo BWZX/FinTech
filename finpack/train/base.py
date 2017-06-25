@@ -1,4 +1,5 @@
 import time
+import weakref
 
 from .config import TrainConfig
 from ..utils import logger, describe_model
@@ -47,10 +48,10 @@ class Trainer(object):
         self.setup()
         self.main_loop()
 
-    @abstractmethod
     def run_step(self):
         """ Abstract method: run one iteration. Subclass should define what is "iteration".
         """
+        raise NotImplementedError
 
     def _trigger_epoch(self):
         pass
@@ -72,21 +73,19 @@ class Trainer(object):
         self._callbacks.setup_graph(weakref.proxy(self))
 
 
-    @abstractmethod
     def _setup(self):
         """ setup Trainer-specific stuff for training"""
+        raise NotImplementedError
 
     @property
     def global_step(self):
-        return self._starting_step + \
-            self.config.steps_per_epoch * (self.epoch_num - 1) + \
+        return self.config.steps_per_epoch * (self.epoch_num - 1) + \
             self.local_step + 1  # +1: the ongoing step
 
     def main_loop(self):
         """
         Run the main training loop.
         """
-        self._starting_step = get_global_step_value()
         try:
             self._callbacks.before_train()
             # refresh global step (might have changed by callbacks) TODO ugly
@@ -104,13 +103,10 @@ class Trainer(object):
                 # trigger epoch outside the timing region.
                 self._callbacks.trigger_epoch()
             logger.info("Training has finished!")
-        except (StopTraining, tf.errors.OutOfRangeError):
-            logger.info("Training was stopped.")
         except KeyboardInterrupt:
             logger.info("Detected Ctrl-C and exiting main loop.")
         except:
             raise
         finally:
             self._callbacks.after_train()
-            self.hooked_sess.close()
 

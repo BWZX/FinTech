@@ -1,4 +1,5 @@
 import argparse
+import tushare as ts
 
 import torch
 import torch.nn as nn
@@ -40,7 +41,7 @@ class RNN(nn.Module):
 
 class Model():
     def __init__(self):
-        self.module = RNN(len(cfg.columns), cfg.hidden_size, cfg.output_size, cfg.n_layers)
+        self.module = RNN(len(cfg.predictors), cfg.hidden_size, cfg.output_size, cfg.n_layers)
         self.module.cuda()
 
     def get_inputs(self):
@@ -56,12 +57,15 @@ class Model():
         return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
 
 def get_config(args):
+    stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+    # stock_list = ["600000"]
+
     ds_train = StockHistory(stock_list,
                             start="2010-01-01",
                             end="2017-05-31",
                             pred_column="close")
 
-    ds = BatchData(ds, args.batch_size)
+    ds_train = BatchData(ds_train, int(args.batch_size))
 
     callbacks = []
 
@@ -75,7 +79,7 @@ def get_config(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch_size', help='batch size')
+    parser.add_argument('--batch_size', help='batch size', required=True)
     args = parser.parse_args()
 
     config = get_config(args)
