@@ -27,6 +27,9 @@ class Callback(object):
     """
 
     def setup_graph(self, trainer):
+        print("AAAAAAAAAAAAAAAAAAAAA")
+        print("AAAAAAAAAAAAAAAAAAAAA")
+        print("AAAAAAAAAAAAAAAAAAAAA")
         self._steps_per_epoch = trainer.config.steps_per_epoch
         self.trainer = trainer
 

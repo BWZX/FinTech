@@ -56,6 +56,9 @@ class Trainer(object):
         pass
 
     def setup(self):
+        print("CCCCCCCCCCCCCCC")
+        print("CCCCCCCCCCCCCCC")
+        print("CCCCCCCCCCCCCCC")
         """
         Setup the trainer and be ready for the main loop.
         """
