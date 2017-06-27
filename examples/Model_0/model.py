@@ -79,6 +79,9 @@ def get_config(args):
 
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
+        ScheduledHyperParamSetter('learning_rate',
+                                  [(0, 1e-4), (3, 2e-4), (6, 3e-4), (8, 6e-4), (10, 1e-3), (70, 1e-4), (110, 1e-5)]),
+        LearningRateSetter(),
     ]
 
     return TrainConfig(
