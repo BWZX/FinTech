@@ -1,4 +1,7 @@
 import time
+import torch
+import numpy as np
+import os
 import weakref
 
 from .config import TrainConfig
@@ -68,7 +71,9 @@ class Trainer(object):
         describe_model(self.model)
 
         # load model
-        self.model.get_saved_model().load_state_dict(torch.load(self.config.load_path))
+        if os.path.isfile(self.config.load_path):
+            logger.info("Loading model from {} ...".format(self.config.load_path))
+            self.model.get_saved_model().load_state_dict(torch.load(self.config.load_path))
 
         # some final operations that might modify the graph
         logger.info("Setup callbacks ...")
@@ -98,11 +103,13 @@ class Trainer(object):
                 logger.info("Start Epoch {} ...".format(self.epoch_num))
                 self._callbacks.before_epoch()
                 start_time = time.time()
+                loss_ary = []
                 for self.local_step in range(self.config.steps_per_epoch):
                     self.run_step()
                     self._callbacks.trigger_step()
-                logger.info("Epoch {} (global_step {}) finished, time:{:.2f} sec.".format(
-                    self.epoch_num, self.global_step, time.time() - start_time))
+                    loss_ary.append(self.model.cost.data[0])
+                logger.info("Epoch {} (global_step {}) finished, time:{:.2f} sec, loss is {:.2f}".format(
+                    self.epoch_num, self.global_step, time.time() - start_time, np.mean(loss_ary)))
 
                 # trigger epoch outside the timing region.
                 self._callbacks.trigger_epoch()

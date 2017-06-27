@@ -89,7 +89,7 @@ def get_config(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', help='batch size', required=True)
-    parser.add_argument('--load', help='batch size', required=True)
+    parser.add_argument('--load', help='batch size')
     args = parser.parse_args()
 
     logger.auto_set_dir()
