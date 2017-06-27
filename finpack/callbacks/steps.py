@@ -27,8 +27,6 @@ class ProgressBar(Callback):
 
     def _before_epoch(self):
         self._bar = tqdm.trange(self._total, **self._tqdm_args)
-        # if self.local_step == 0:
-        #     self._bar = tqdm.trange(self._total, **self._tqdm_args)
 
     def _trigger_step(self):
         self._bar.update()

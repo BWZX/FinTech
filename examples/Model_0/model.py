@@ -59,6 +59,9 @@ class Model():
     def get_optimizer(self):
         return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
 
+    def get_saved_model(self):
+        return self.module
+
 def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
@@ -70,7 +73,7 @@ def get_config(args):
 
     ds_train = BatchData(ds_train, int(args.batch_size))
 
-    callbacks = []
+    callbacks = [ModelSaver()]
 
     return TrainConfig(
         dataflow=ds_train,
@@ -85,5 +88,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', help='batch size', required=True)
     args = parser.parse_args()
 
+    logger.auto_set_dir()
     config = get_config(args)
     SimpleTrainer(config).train()
