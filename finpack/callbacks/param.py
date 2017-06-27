@@ -3,8 +3,9 @@
 # File: param.py
 # Author: Yuxin Wu <ppwwyyxx@gmail.com>
 
-import tensorflow as tf
 import os
+import operator
+import tensorflow as tf
 
 from .base import Callback
 from ..utils import logger
@@ -19,7 +20,7 @@ class LearningRateSetter(Callback):
         self.optimizer = self.trainer.model.optimizer
 
     def _trigger(self):
-        for param_group in optimizer.param_groups:
+        for param_group in self.optimizer.param_groups:
             param_group['lr'] = self.trainer.model.hyper_params["learning_rate"]
 
 
@@ -52,7 +53,6 @@ class HyperParamSetter(Callback):
         self.last_value = ret
         return ret
 
-    @abstractmethod
     def _get_value_to_set(self):
         pass
 
@@ -70,7 +70,7 @@ class HyperParamSetter(Callback):
         self._set_param()
 
     def _set_param(self):
-        self.trainer.model.hyper_params[self.params] = self.get_value_to_set()
+        self.trainer.model.hyper_params[self.param] = self.get_value_to_set()
 
 
 class HumanHyperParamSetter(HyperParamSetter):
@@ -96,7 +96,7 @@ class HumanHyperParamSetter(HyperParamSetter):
     def _get_value_to_set(self):
         # ignore if no such file exists
         if not os.path.isfile(self.file_name):
-            return None
+            return self.get_current_value()
         try:
             with open(self.file_name) as f:
                 lines = f.readlines()
@@ -108,7 +108,7 @@ class HumanHyperParamSetter(HyperParamSetter):
             logger.warn(
                 "Cannot find {} in {}".format(
                     self.param.readable_name, self.file_name))
-            return None
+            return self.get_current_value()
 
 
 class ScheduledHyperParamSetter(HyperParamSetter):
@@ -145,7 +145,7 @@ class ScheduledHyperParamSetter(HyperParamSetter):
             for e, v in self.schedule:
                 if e == self.epoch_num:
                     return v
-            return None
+            return self.get_current_value()
         else:
             laste, lastv = None, None
             for e, v in self.schedule:
@@ -156,7 +156,7 @@ class ScheduledHyperParamSetter(HyperParamSetter):
                 laste, lastv = e, v
             if laste is None or laste == e:
                 # hasn't reached the first scheduled point, or reached the end of all scheduled points
-                return None
+                return self.get_current_value()
             v = (self.epoch_num - laste) * 1. / (e - laste) * (v - lastv) + lastv
             return v
 
@@ -185,60 +185,3 @@ class HyperParamSetterWithFunc(HyperParamSetter):
         return self.f(self.epoch_num, self.get_current_value())
 
 
-class StatMonitorParamSetter(HyperParamSetter):
-    """
-    Change the param by monitoring the change of a statistic.
-    Change when it wasn't decreasing/increasing enough.
-    """
-    def __init__(self, param, stat_name, value_func, threshold,
-                 last_k, reverse=False):
-        """
-        Args:
-            param: same as in :class:`HyperParamSetter`.
-            stat_name (str): name of the statistics.
-            value_func (float -> float): a function which returns a new value
-                taking the old value.
-            threshold (float): change threshold.
-            last_k (int): last k epochs.
-            reverse (bool): monitor increasing instead of decreasing.
-
-        This callback will change param by ``new_value = value_func(old_value)``, when:
-        ``min(stats) >= stats[0] - threshold``, where
-        ``stats = [stat_name in last k epochs]``
-
-        Example:
-            If validation error wasn't decreasing for 5 epochs, anneal the learning rate:
-
-            .. code-block:: python
-
-                StatMonitorParamSetter('learning_rate', 'val-error', lambda x: x * 0.2, 0, 5)
-        """
-        super(StatMonitorParamSetter, self).__init__(param)
-        self.stat_name = stat_name
-        self.value_func = value_func
-        self.last_k = last_k
-        self.threshold = threshold
-        self.reverse = reverse
-
-        self.last_changed_epoch = 0
-
-    def _get_value_to_set(self):
-        hist = self.trainer.monitors.get_history(self.stat_name)
-        if len(hist) < self.last_k + 1 or \
-                self.epoch_num - self.last_changed_epoch < self.last_k:
-            return None
-        hist = hist[-self.last_k - 1:]    # len==last_k+1
-
-        hist_first = hist[0]
-        if not self.reverse:
-            hist_min = min(hist)
-            if hist_min < hist_first - self.threshold:  # small enough
-                return None
-        else:
-            hist_max = max(hist)
-            if hist_max > hist_first + self.threshold:  # large enough
-                return None
-        self.last_changed_epoch = self.epoch_num
-        logger.info("[StatMonitorParamSetter] Triggered, history: " +
-                    ','.join(map(str, hist)))
-        return self.value_func(self.get_current_value())
