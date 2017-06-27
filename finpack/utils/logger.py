@@ -108,7 +108,7 @@ If you're resuming from a previous run you can choose to keep it.""")
         else:
             raise ValueError("Unknown action: {}".format(act))
     LOG_DIR = dirname
-    # from .utils import mkdir_p
+    from .utils import mkdir_p
     mkdir_p(dirname)
     _set_file(os.path.join(dirname, 'log.log'))
 

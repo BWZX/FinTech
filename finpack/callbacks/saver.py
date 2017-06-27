@@ -28,7 +28,7 @@ class ModelSaver(Callback):
         self.path = os.path.join(self.checkpoint_dir, 'model')
 
     def _trigger(self):
-        torch.save(self.trainer.model.saved_module, self.path)
+        torch.save(self.trainer.model.get_saved_model(), self.path)
 
         # try:
         #     if not self.meta_graph_written:
