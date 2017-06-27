@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 
 from finpack import *
+from finpack.utils import logger
 
 from reader import StockHistory
 from cfgs.config import cfg
