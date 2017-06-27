@@ -74,7 +74,9 @@ def get_config(args):
 
     ds_train = BatchData(ds_train, int(args.batch_size))
 
-    callbacks = [ModelSaver()]
+    callbacks = [
+        PeriodicTrigger(ModelSaver(), every_k_epochs=3),
+    ]
 
     return TrainConfig(
         dataflow=ds_train,
