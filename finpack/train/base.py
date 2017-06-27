@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import os
 import weakref
+import tensorflow as tf
 
 from .config import TrainConfig
 from ..utils import logger, describe_model
@@ -80,6 +81,8 @@ class Trainer(object):
         self._callbacks = Callbacks(self._callbacks)
         self._callbacks.setup_graph(weakref.proxy(self))
 
+        self.writer = tf.summary.FileWriter(logger.LOG_DIR)
+
 
     def _setup(self):
         """ setup Trainer-specific stuff for training"""
@@ -110,6 +113,8 @@ class Trainer(object):
                     loss_ary.append(self.model.cost.data[0])
                 logger.info("Epoch {} (global_step {}) finished, time:{:.2f} sec, loss is {:.2f}".format(
                     self.epoch_num, self.global_step, time.time() - start_time, np.mean(loss_ary)))
+                summary = tf.Summary(value=[tf.Summary.Value(tag="cost", simple_value=np.mean(loss_ary))])
+                self.writer.add_summary(summary, self.global_step)
 
                 # trigger epoch outside the timing region.
                 self._callbacks.trigger_epoch()
