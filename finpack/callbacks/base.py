@@ -1,5 +1,5 @@
 
-__all__ = ['Callback']
+__all__ = ['Callback', 'ProxyCallback']
 
 
 class Callback(object):
@@ -104,3 +104,41 @@ class Callback(object):
 
     def __str__(self):
         return type(self).__name__
+
+
+class ProxyCallback(Callback):
+    """ A callback which proxy all methods to another callback.
+        It's useful as a base class of callbacks which decorate other callbacks.
+    """
+
+    def __init__(self, cb):
+        """
+        Args:
+            cb(Callback): the underlying callback
+        """
+        assert isinstance(cb, Callback), type(cb)
+        self.cb = cb
+
+    def _before_train(self):
+        self.cb.before_train()
+
+    def _setup_graph(self):
+        self.cb.setup_graph(self.trainer)
+
+    def _trigger_epoch(self):
+        self.cb.trigger_epoch()
+
+    def _trigger_step(self):
+        self.cb.trigger_step()
+
+    def _after_train(self):
+        self.cb.after_train()
+
+    def _before_epoch(self):
+        self.cb.before_epoch()
+
+    def _after_epoch(self):
+        self.cb.after_epoch()
+
+    def __str__(self):
+        return "Proxy-" + str(self.cb)
