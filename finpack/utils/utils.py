@@ -6,7 +6,7 @@ from termcolor import colored
 
 from . import logger
 
-__all__ = ['get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm']
+__all__ = ['get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm', 'mkdir_p']
 
 
 _RNG_SEED = None
@@ -59,3 +59,18 @@ def get_tqdm(**kwargs):
     """ Similar to :func:`get_tqdm_kwargs`, but returns the tqdm object
     directly. """
     return tqdm(**get_tqdm_kwargs(**kwargs))
+
+def mkdir_p(dirname):
+    """ Make a dir recursively, but do nothing if the dir exists
+
+    Args:
+        dirname(str):
+    """
+    assert dirname is not None
+    if dirname == '' or os.path.isdir(dirname):
+        return
+    try:
+        os.makedirs(dirname)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise e
