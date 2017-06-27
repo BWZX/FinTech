@@ -40,7 +40,7 @@ class RNN(nn.Module):
         output = output.view(batch_size, seq_len, self.output_size)
         return output, h_c
 
-class Model():
+class Model(ModelDesc):
     def __init__(self):
         self.module = RNN(len(cfg.predictors), cfg.hidden_size, cfg.output_size, cfg.n_layers)
         self.module.cuda()
@@ -57,7 +57,9 @@ class Model():
 
         self.cost = self.criterion(output[:,-1], label)
 
-    def get_optimizer(self):
+        self.add_summary(self.cost, "cost")
+
+    def _get_optimizer(self):
         return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
 
     def get_saved_model(self):

@@ -41,11 +41,17 @@ class Trainer(object):
         self.local_step = -1
 
         self._callbacks = []
+        self.monitors = []
 
     def register_callback(self, cb):
         assert isinstance(cb, Callback), cb
         self._callbacks.append(cb)
 
+
+    def register_monitor(self, mon):
+        assert isinstance(mon, TrainingMonitor), mon
+        self.monitors.append(mon)
+        self.register_callback(mon)
 
     def train(self):
         """ Start training """
@@ -68,6 +74,10 @@ class Trainer(object):
 
         for cb in self.config.callbacks:
             self.register_callback(cb)
+        for m in self.config.monitors:
+            self.register_monitor(m)
+        self.monitors = Monitors(self.monitors)
+        self.register_callback(self.monitors)
 
         describe_model(self.model)
 
@@ -110,11 +120,11 @@ class Trainer(object):
                 for self.local_step in range(self.config.steps_per_epoch):
                     self.run_step()
                     self._callbacks.trigger_step()
-                    loss_ary.append(self.model.cost.data[0])
-                logger.info("Epoch {} (global_step {}) finished, time:{:.2f} sec, loss is {:.2f}".format(
-                    self.epoch_num, self.global_step, time.time() - start_time, np.mean(loss_ary)))
-                summary = tf.Summary(value=[tf.Summary.Value(tag="cost", simple_value=np.mean(loss_ary))])
-                self.writer.add_summary(summary, self.global_step)
+                    # loss_ary.append(self.model.get_cost.data[0])
+                logger.info("Epoch {} (global_step {}) finished, time:{:.2f} sec".format(
+                    self.epoch_num, self.global_step, time.time() - start_time))
+                # summary = tf.Summary(value=[tf.Summary.Value(tag="cost", simple_value=np.mean(loss_ary))])
+                # self.writer.add_summary(summary, self.global_step)
 
                 # trigger epoch outside the timing region.
                 self._callbacks.trigger_epoch()

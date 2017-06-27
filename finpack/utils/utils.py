@@ -4,12 +4,25 @@ import numpy as np
 from datetime import datetime
 from termcolor import colored
 
+import tensorflow as tf
+
 from . import logger
 
-__all__ = ['get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm', 'mkdir_p']
+__all__ = ['create_scalar_summary', 'get_rng', 'describe_model', 'get_tqdm_kwargs', 'get_tqdm', 'mkdir_p']
 
 
 _RNG_SEED = None
+
+def create_scalar_summary(name, v):
+    """
+    Returns:
+        tf.Summary: a tf.Summary object with name and simple scalar value v.
+    """
+    assert isinstance(name, six.string_types), type(name)
+    v = float(v)
+    s = tf.Summary()
+    s.value.add(tag=name, simple_value=v)
+    return s
 
 def get_rng(obj=None):
     """

@@ -36,13 +36,14 @@ class TrainConfig(object):
             callbacks = []
         assert_type(callbacks, list)
         extra_callbacks = [
-            ProgressBar()]
-            # MergeAllSummaries(),
-            # RunUpdateOps()]
+            ProgressBar(),
+            MergeAllSummaries()]
         self._callbacks = callbacks + extra_callbacks
         assert_type(self._callbacks, list)
 
-        # self.monitors = [SummaryWriter(), JSONWriter(), ScalarPrinter()]
+        if monitors is None:
+            monitors = [TFSummaryWriter(), JSONWriter(), ScalarPrinter()]
+        self.monitors = monitors
 
         self.model = model
         # assert_type(self.model, ModelDesc)
