@@ -12,7 +12,8 @@ class TrainConfig(object):
     """
 
     def __init__(self, dataflow, model=None, callbacks=None,
-                 starting_epoch=1, steps_per_epoch=None, max_epoch=99999):
+                 starting_epoch=1, steps_per_epoch=None, max_epoch=99999,
+                 load_path=""):
         """
         Args:
             dataflow (DataFlow): the dataflow to train.
@@ -45,6 +46,7 @@ class TrainConfig(object):
 
         self.model = model
         # assert_type(self.model, ModelDesc)
+        self.load_path = load_path
 
         self.steps_per_epoch = self.dataflow.size()
 

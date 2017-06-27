@@ -67,6 +67,9 @@ class Trainer(object):
 
         describe_model(self.model)
 
+        # load model
+        self.model.get_saved_model().load_state_dict(torch.load(self.config.load_path))
+
         # some final operations that might modify the graph
         logger.info("Setup callbacks ...")
         self._callbacks = Callbacks(self._callbacks)

@@ -81,12 +81,13 @@ def get_config(args):
         callbacks=callbacks,
         model=Model(),
         max_epoch=160,
+        load_path=args.load,
     )
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', help='batch size', required=True)
+    parser.add_argument('--load', help='batch size', required=True)
     args = parser.parse_args()
 
     logger.auto_set_dir()
