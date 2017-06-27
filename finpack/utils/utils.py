@@ -18,7 +18,6 @@ def create_scalar_summary(name, v):
     Returns:
         tf.Summary: a tf.Summary object with name and simple scalar value v.
     """
-    assert isinstance(name, six.string_types), type(name)
     v = float(v)
     s = tf.Summary()
     s.value.add(tag=name, simple_value=v)

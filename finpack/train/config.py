@@ -1,4 +1,6 @@
-from ..callbacks import (Callbacks, ProgressBar)
+from ..callbacks import (
+    Callbacks, ProgressBar, MergeAllSummaries,
+    TFSummaryWriter, JSONWriter, ScalarPrinter)
 from ..dataflow.base import DataFlow
 # from ..models import ModelDesc
 from ..utils import logger
@@ -11,7 +13,7 @@ class TrainConfig(object):
     Config for trainer.
     """
 
-    def __init__(self, dataflow, model=None, callbacks=None,
+    def __init__(self, dataflow, model=None, callbacks=None, monitors=None,
                  starting_epoch=1, steps_per_epoch=None, max_epoch=99999,
                  load_path=""):
         """

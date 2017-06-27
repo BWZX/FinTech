@@ -42,6 +42,7 @@ class RNN(nn.Module):
 
 class Model(ModelDesc):
     def __init__(self):
+        super(Model, self).__init__()
         self.module = RNN(len(cfg.predictors), cfg.hidden_size, cfg.output_size, cfg.n_layers)
         self.module.cuda()
         self.criterion = nn.MSELoss()

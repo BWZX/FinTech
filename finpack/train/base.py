@@ -8,6 +8,8 @@ import tensorflow as tf
 from .config import TrainConfig
 from ..utils import logger, describe_model
 from ..callbacks import Callback, Callbacks
+from ..callbacks.monitor import Monitors, TrainingMonitor
+
 
 __all__ = ['Trainer']
 

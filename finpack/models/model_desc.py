@@ -5,7 +5,7 @@ __all__ = ['ModelDesc']
 
 class ModelDesc(object):
 
-    def __init__():
+    def __init__(self):
         self.summaries = { }
 
     def get_cost(self):
@@ -15,7 +15,7 @@ class ModelDesc(object):
     def _get_cost(self, *args):
         return self.cost
 
-    def add_summary(variable, name):
+    def add_summary(self, variable, name):
         if name not in self.summaries.keys():
             self.summaries[name] = []
         self.summaries[name].append(variable.data[0])

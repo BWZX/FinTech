@@ -14,7 +14,6 @@ import re
 
 import tensorflow as tf
 from ..utils import logger, create_scalar_summary
-from ..tfutils.summary import create_scalar_summary
 from .base import Callback
 
 __all__ = ['TrainingMonitor', 'Monitors',
