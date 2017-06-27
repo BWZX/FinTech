@@ -67,7 +67,7 @@ def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
 
-    ds_train = StockHistory(stock_list,
+    ds_train = StockHistory(stock_list[:10],
                             start="2010-01-01",
                             end="2017-05-31",
                             pred_column="close")
