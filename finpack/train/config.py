@@ -46,7 +46,7 @@ class TrainConfig(object):
 
         self.model = model
         # assert_type(self.model, ModelDesc)
-        self.load_path = load_path
+        self.load_path = load_path or ""
 
         self.steps_per_epoch = self.dataflow.size()
 

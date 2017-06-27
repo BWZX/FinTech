@@ -29,4 +29,4 @@ class ModelSaver(Callback):
 
     def _trigger(self):
         filepath = self.path + "-" + str(self.trainer.global_step)
-        torch.save(self.trainer.model.get_saved_model(), filepath)
+        torch.save(self.trainer.model.get_saved_model().state_dict(), filepath)
