@@ -1,8 +1,10 @@
 import numpy as np
+import copy as copy_mod
+from .augs import AugmentorList
 
 from .base import DataFlow, ProxyDataFlow, RNGDataFlow
 
-__all__ = ["BatchData"]
+__all__ = ["BatchData", "MapData", "AugmentData"]
 
 class BatchData(ProxyDataFlow):
 
@@ -69,3 +71,71 @@ class BatchData(ProxyDataFlow):
             result.append(np.concatenate(data, axis=stack_dim))
             # result.append(np.asarray([x[k] for x in data_holder], dtype=tp))
         return result
+
+class MapData(ProxyDataFlow):
+    """ Apply a mapper/filter on the DataFlow"""
+
+    def __init__(self, ds, func):
+        """
+        Args:
+            ds (DataFlow): input DataFlow
+            func (datapoint -> datapoint | None): takes a datapoint and returns a new
+                datapoint. Return None to discard this data point.
+                Note that if you use the filter feature, ``ds.size()`` will be incorrect.
+
+        Note:
+            Please make sure func doesn't modify the components
+            unless you're certain it's safe.
+        """
+        super(MapData, self).__init__(ds)
+        self.func = func
+
+    def get_data(self):
+        for dp in self.ds.get_data():
+            ret = self.func(dp)
+            if ret is not None:
+                yield ret
+
+
+class AugmentData(MapData):
+    """
+    Apply image augmentors on 1 component.
+    """
+    def __init__(self, ds, augmentors, copy=True):
+        """
+        Args:
+            ds (DataFlow): input DataFlow.
+            augmentors (AugmentorList): a list of :class:`imgaug.ImageAugmentor` to be applied in order.
+            index (int): the index of the image component to be augmented.
+            copy (bool): Some augmentors modify the input images. When copy is
+                True, a copy will be made before any augmentors are applied,
+                to keep the original images not modified.
+                Turn it off to save time when you know it's OK.
+        """
+        if isinstance(augmentors, AugmentorList):
+            self.augs = augmentors
+        else:
+            self.augs = AugmentorList(augmentors)
+
+        self._nr_error = 0
+
+        def func(x):
+            try:
+                if copy:
+                    x = copy_mod.deepcopy(x)
+                ret = self.augs.augment(x)
+            except KeyboardInterrupt:
+                raise
+            except Exception:
+                self._nr_error += 1
+                if self._nr_error % 1000 == 0 or self._nr_error < 10:
+                    logger.exception("Got {} augmentation errors.".format(self._nr_error))
+                return None
+            return ret
+
+        super(AugmentComponent, self).__init__(
+            ds, func)
+
+    def reset_state(self):
+        self.ds.reset_state()
+        self.augs.reset_state()

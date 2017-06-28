@@ -12,9 +12,7 @@ def _global_import(name):
         globals()[k] = p.__dict__[k]
         __all__.append(k)
 
-__SKIP = ['augmentors']
 for _, module_name, __ in iter_modules(
         [os.path.dirname(__file__)]):
-    if not module_name.startswith('_') and \
-    		module_name not in __SKIP:
+    if not module_name.startswith('_'):
         _global_import(module_name)
