@@ -43,8 +43,8 @@ class AugmentorList(Augmentor):
 
     def _augment(self, dp):
         for aug in self.augs:
-            d = aug._augment(d)
-        return d
+            dp = aug._augment(dp)
+        return dp
 
     def reset_state(self):
         """ Will reset state of each augmentor """

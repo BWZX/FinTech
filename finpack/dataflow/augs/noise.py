@@ -9,13 +9,11 @@ class GaussianNoise(Augmentor):
     """
     def __init__(self, sigma=1):
         super(GaussianNoise, self).__init__()
-        self._init(locals())
+        self.sigma = sigma
 
-    # def _get_augment_params(self, seq):
-    #     return self.rng.randn(*seq.shape)
-
-    def _augment(self, dp, noise):
-        noise = self.rnd.randn(*dp[0].shape)
+    def _augment(self, dp):
+        noise = self.rng.randn(*dp[0].shape)
         old_dtype = dp[0].dtype
         dp[0] = dp[0] + noise * self.sigma
-        return ret.astype(old_dtype)
+        dp[0] = dp[0].astype(old_dtype)
+        return dp

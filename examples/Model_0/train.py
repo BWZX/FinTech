@@ -81,7 +81,7 @@ def get_config(args):
         augs.GaussianNoise()
     ]
 
-    ds = AugmentData(ds, augmentors)
+    ds_train = AugmentData(ds_train, augmentors)
 
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
@@ -100,7 +100,7 @@ def get_config(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch_size', help='batch size', required=True)
+    parser.add_argument('--batch_size', help='batch size', default=1024)
     parser.add_argument('--load', help='batch size')
     args = parser.parse_args()
 

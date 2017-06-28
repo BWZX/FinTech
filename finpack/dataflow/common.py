@@ -3,6 +3,7 @@ import copy as copy_mod
 from .augs import AugmentorList
 
 from .base import DataFlow, ProxyDataFlow, RNGDataFlow
+from ..utils import logger
 
 __all__ = ["BatchData", "MapData", "AugmentData"]
 
@@ -133,7 +134,7 @@ class AugmentData(MapData):
                 return None
             return ret
 
-        super(AugmentComponent, self).__init__(
+        super(AugmentData, self).__init__(
             ds, func)
 
     def reset_state(self):
