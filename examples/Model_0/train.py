@@ -72,16 +72,21 @@ def get_config(args):
 
     ds_train = StockHistory(stock_list[:10],
                             start="2010-01-01",
-                            end="2017-05-31",
+                            end="2016-12-31",
                             pred_column="close")
 
-    ds_train = BatchData(ds_train, int(args.batch_size))
+    ds_test = StockHistory(stock_list[:10],
+                           start="2017-01-01",
+                           end="2017-5-31",
+                           pred_column="close")
 
     augmentors = [
         augs.GaussianNoise()
     ]
 
     ds_train = AugmentData(ds_train, augmentors)
+
+    ds_train = BatchData(ds_train, int(args.batch_size))
 
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
