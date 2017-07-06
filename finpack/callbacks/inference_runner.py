@@ -33,11 +33,11 @@ class InferenceRunner(Callback):
             dp = [Variable(self._input_desc[idx](ele).cuda()) for idx, ele in enumerate(dp)]
             self.model.run_graph(dp)
             for inf in self.infs:
-                if inf.inf_name not in self.inf_summaries.keys():
-                    self.inf_summaries[inf.inf_name] = []
+                if inf.inf_name not in self.model.inf_summaries.keys():
+                    self.model.inf_summaries[inf.inf_name] = []
                 if isinstance(self.model.__dict__[inf.var_name], Variable):
                     variable = self.model.__dict__[inf.var_name].data[0]
-                self.inf_summaries[inf.inf_name].append(variable)
+                self.model.inf_summaries[inf.inf_name].append(variable)
 
         for name, values in self.model.inf_summaries.items():
             self.trainer.monitors.put_scalar(name, np.mean(values))
