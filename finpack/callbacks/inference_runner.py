@@ -2,7 +2,7 @@ import tqdm
 from ..dataflow import DataFlow
 
 from .base import Callback
-from .inference import Inferencer
+# from .inference import Inferencer
 
 __all__ = ['InferenceRunner']
 

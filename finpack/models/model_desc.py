@@ -28,12 +28,15 @@ class ModelDesc(object):
         self._train()
         self.is_train = True
 
-    def _train():
+    def _train(self):
         pass
 
     def eval(self):
         self._eval()
         self.is_train = False
+
+    def _eval(self):
+        pass
 
     def add_summary(self, variable, name):
         if self.is_train == False:

@@ -69,10 +69,10 @@ class Model(ModelDesc):
     def get_saved_model(self):
         return self.module
 
-    def _train():
+    def _train(self):
         self.module.train()
 
-    def _eval():
+    def _eval(self):
         self.module.eval()
 
 def get_config(args):
