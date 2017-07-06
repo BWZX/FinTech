@@ -3,6 +3,7 @@ from ..dataflow import DataFlow
 
 from .base import Callback
 from .inference import Inferencer
+from ..utils import get_tqdm_kwargs
 
 __all__ = ['InferenceRunner']
 
