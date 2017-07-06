@@ -96,6 +96,7 @@ def get_config(args):
     ds_train = AugmentData(ds_train, augmentors)
 
     ds_train = BatchData(ds_train, int(args.batch_size))
+    ds_test = BatchData(ds_test, int(args.batch_size))
 
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),

@@ -1,5 +1,6 @@
 import tqdm
 from torch.autograd import Variable
+import numpy as np
 
 from .base import Callback
 from .inference import Inferencer
