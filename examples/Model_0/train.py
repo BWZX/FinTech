@@ -101,7 +101,7 @@ def get_config(args):
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate',
                                   [(0, 1e-3), (10, 1e-4)]),
-        # InferenceRunner(ds_test, NumericError("cost")),
+        InferenceRunner(ds_test, NumericError("cost")),
         LearningRateSetter(),
     ]
 
