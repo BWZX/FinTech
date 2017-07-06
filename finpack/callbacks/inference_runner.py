@@ -1,9 +1,10 @@
 import tqdm
-from ..dataflow import DataFlow
+from torch.autograd import Variable
 
 from .base import Callback
 from .inference import Inferencer
 from ..utils import get_tqdm_kwargs
+from ..dataflow import DataFlow
 
 __all__ = ['InferenceRunner']
 
