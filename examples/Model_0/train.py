@@ -40,6 +40,9 @@ class RNN(nn.Module):
         output = output.view(batch_size, seq_len, self.output_size)
         return output, h_c
 
+# m = Model()
+# m.__dict__[name]
+
 class Model(ModelDesc):
     def __init__(self):
         super(Model, self).__init__()
@@ -70,12 +73,12 @@ def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
 
-    ds_train = StockHistory(stock_list[:10],
+    ds_train = StockHistory(stock_list,
                             start="2010-01-01",
                             end="2016-12-31",
                             pred_column="close")
 
-    ds_test = StockHistory(stock_list[:10],
+    ds_test = StockHistory(stock_list,
                            start="2017-01-01",
                            end="2017-5-31",
                            pred_column="close")
@@ -91,7 +94,7 @@ def get_config(args):
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate',
-                                  [(0, 1e-3)]),
+                                  [(0, 1e-3), (10, 1e-4)]),
         LearningRateSetter(),
     ]
 
@@ -106,7 +109,7 @@ def get_config(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', help='batch size', default=1024)
-    parser.add_argument('--load', help='batch size')
+    parser.add_argument('--load', help='model to load')
     args = parser.parse_args()
 
     logger.auto_set_dir()
