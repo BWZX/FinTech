@@ -7,7 +7,6 @@ class ModelDesc(object):
 
     def __init__(self):
         self.summaries = { }
-        self.inf_summaries = { }
         self.hyper_params = { }
         self.is_train = None
 
