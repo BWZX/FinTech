@@ -43,4 +43,4 @@ class InferenceRunner(Callback):
 
         for name, values in self.model.inf_summaries.items():
             self.trainer.monitors.put_scalar(name, np.mean(values))
-        self.trainer.model.clear_summaries()
+        # self.trainer.model.clear_summaries()
