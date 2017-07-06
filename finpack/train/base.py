@@ -119,6 +119,7 @@ class Trainer(object):
                 self._callbacks.before_epoch()
                 start_time = time.time()
                 loss_ary = []
+                self.model.train()
                 for self.local_step in range(self.config.steps_per_epoch):
                     self.run_step()
                     self._callbacks.trigger_step()

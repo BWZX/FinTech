@@ -69,6 +69,12 @@ class Model(ModelDesc):
     def get_saved_model(self):
         return self.module
 
+    def _train():
+        self.module.train()
+
+    def _eval():
+        self.module.eval()
+
 def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
@@ -95,6 +101,7 @@ def get_config(args):
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate',
                                   [(0, 1e-3), (10, 1e-4)]),
+        # InferenceRunner(ds_test, NumericError("cost")),
         LearningRateSetter(),
     ]
 

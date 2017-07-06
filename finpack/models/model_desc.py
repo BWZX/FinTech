@@ -8,6 +8,7 @@ class ModelDesc(object):
     def __init__(self):
         self.summaries = { }
         self.hyper_params = { }
+        self.is_train = None
 
     def run_graph(self, inputs):
         self._run_graph(inputs)
@@ -23,7 +24,20 @@ class ModelDesc(object):
     def _get_cost(self, *args):
         return self.cost
 
+    def train(self):
+        self._train()
+        self.is_train = True
+
+    def _train():
+        pass
+
+    def eval(self):
+        self._eval()
+        self.is_train = False
+
     def add_summary(self, variable, name):
+        if self.is_train == False:
+            return
         if name not in self.summaries.keys():
             self.summaries[name] = []
         if isinstance(variable, Variable):
