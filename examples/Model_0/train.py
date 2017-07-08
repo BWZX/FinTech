@@ -90,7 +90,7 @@ def get_config(args):
                            pred_column="close")
 
     augmentors = [
-        augs.GaussianNoise()
+        # augs.GaussianNoise()
     ]
 
     ds_train = AugmentData(ds_train, augmentors)

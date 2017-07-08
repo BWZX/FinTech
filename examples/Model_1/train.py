@@ -52,7 +52,7 @@ class Model(ModelDesc):
         self.criterion.cuda()
 
     def get_inputs(self):
-        return [torch.FloatTensor, torch.FloatTensor]
+        return [torch.FloatTensor, torch.LongTensor]
 
     def _run_graph(self, inputs):
         [input, label] = inputs
@@ -79,18 +79,18 @@ def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
 
-    ds_train = StockHistory(stock_list,
+    ds_train = StockHistory(stock_list[:10],
                             start="2010-01-01",
                             end="2016-12-31",
                             pred_column="close")
 
-    ds_test = StockHistory(stock_list,
+    ds_test = StockHistory(stock_list[:10],
                            start="2017-01-01",
                            end="2017-5-31",
                            pred_column="close")
 
     augmentors = [
-        augs.GaussianNoise()
+        # augs.GaussianNoise()
     ]
 
     ds_train = AugmentData(ds_train, augmentors)
@@ -101,7 +101,7 @@ def get_config(args):
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate',
-                                  [(0, 1e-3), (10, 1e-4)]),
+                                  [(0, 1e-5)]),
         InferenceRunner(ds_test, NumericError("cost")),
         LearningRateSetter(),
     ]
