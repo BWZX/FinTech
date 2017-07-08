@@ -73,6 +73,9 @@ class StockHistory(RNGDataFlow):
                 self.input_list.append(cur_input)
                 self.label_list.append(cur_label)
 
+                if len(self.input_list) >= 3:
+                    break
+
     def size(self):
         return len(self.input_list)
 

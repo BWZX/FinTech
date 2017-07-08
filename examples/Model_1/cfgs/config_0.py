@@ -7,9 +7,9 @@ cfg.predictors = "open,close,high,low".split(',')
 
 cfg.epoch = 200
 # cfg.input_size = 1
-cfg.hidden_size = 100
-cfg.n_layers = 1
+cfg.hidden_size = 500
+cfg.n_layers = 2
 cfg.output_size = 2
 cfg.lr = 1e-3
 
-cfg.normalize = True
+cfg.normalize = False

@@ -64,7 +64,7 @@ class Model(ModelDesc):
         self.add_summary(self.cost, "cost")
 
     def _get_optimizer(self):
-        return torch.optim.Adam(self.module.parameters(), lr=cfg.lr)
+        return torch.optim.SGD(self.module.parameters(), lr=cfg.lr, momentum=0.9)
 
     def get_saved_model(self):
         return self.module
@@ -79,12 +79,12 @@ def get_config(args):
     stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
     # stock_list = ["600000"]
 
-    ds_train = StockHistory(stock_list[:10],
+    ds_train = StockHistory(stock_list[:1],
                             start="2010-01-01",
                             end="2016-12-31",
                             pred_column="close")
 
-    ds_test = StockHistory(stock_list[:10],
+    ds_test = StockHistory(stock_list[:1],
                            start="2017-01-01",
                            end="2017-5-31",
                            pred_column="close")
@@ -101,8 +101,8 @@ def get_config(args):
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate',
-                                  [(0, 1e-5)]),
-        InferenceRunner(ds_test, NumericError("cost")),
+                                  [(0, 1e-2)]),
+        # InferenceRunner(ds_test, NumericError("cost")),
         LearningRateSetter(),
     ]
 
