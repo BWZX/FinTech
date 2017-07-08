@@ -59,6 +59,8 @@ class StockHistory(RNGDataFlow):
                 cur_input = input_data[step: step + seq_len]
                 cur_label = label_data[step + seq_len]
 
+                pdb.set_trace()
+
                 cur_input = np.expand_dims(cur_input, 0)
                 cur_label = np.expand_dims(cur_label, 0)
 

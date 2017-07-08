@@ -12,3 +12,4 @@ cfg.n_layers = 1
 cfg.output_size = 1
 cfg.lr = 1e-3
 
+cfg.normalize = True
