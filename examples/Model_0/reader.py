@@ -59,7 +59,11 @@ class StockHistory(RNGDataFlow):
                 cur_input = input_data[step: step + seq_len]
                 cur_label = label_data[step + seq_len]
 
-                pdb.set_trace()
+                if cfg.normalize == True:
+                    max_v = np.max(cur_input)
+                    min_v = np.min(cur_input)
+                    cur_input = (cur_input - min_v) / (max_v - min_v)
+                    cur_label = (cur_label - min_v) / (max_v - min_v)
 
                 cur_input = np.expand_dims(cur_input, 0)
                 cur_label = np.expand_dims(cur_label, 0)
