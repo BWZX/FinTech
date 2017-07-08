@@ -45,6 +45,8 @@ class Trainer(object):
         self._callbacks = []
         self.monitors = []
 
+        self.data_producer = None
+
     def register_callback(self, cb):
         assert isinstance(cb, Callback), cb
         self._callbacks.append(cb)
@@ -116,6 +118,7 @@ class Trainer(object):
             for self.epoch_num in range(
                     self.config.starting_epoch, self.config.max_epoch + 1):
                 logger.info("Start Epoch {} ...".format(self.epoch_num))
+                self.data_producer = self.ds.get_data()
                 self._callbacks.before_epoch()
                 start_time = time.time()
                 loss_ary = []

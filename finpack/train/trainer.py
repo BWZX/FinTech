@@ -18,7 +18,7 @@ class SimpleTrainer(Trainer):
     def run_step(self):
         self.train_op.zero_grad()
 
-        dp = next(self.ds.get_data())
+        dp = next(self.data_producer)
         assert len(dp) == len(self._input_desc), "Length of inputs should be same with length of input_desc"
         dp = [Variable(self._input_desc[idx](ele).cuda()) for idx, ele in enumerate(dp)]
 
