@@ -40,7 +40,8 @@ class InferenceRunner(Callback):
                     self.inf_summaries[inf.inf_name] = []
                 if isinstance(self.model.__dict__[inf.var_name], Variable):
                     variable = self.model.__dict__[inf.var_name].data[0]
-                self.inf_summaries[inf.inf_name].append(variable)
+                summary_val = inf.datapoint(variable)
+                self.inf_summaries[inf.inf_name].append(summary_val)
 
         for name, values in self.inf_summaries.items():
             self.trainer.monitors.put_scalar(name, np.mean(values))

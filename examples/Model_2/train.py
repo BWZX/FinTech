@@ -49,9 +49,11 @@ class Model(ModelDesc):
     def _run_graph(self, inputs):
         [input, label] = inputs
 
-        output = self.module(input)
+        self.label = label
 
-        self.cost = self.criterion(output, label)
+        self.output = self.module(input)
+
+        self.cost = self.criterion(self.output, self.label)
 
         self.add_summary(self.cost, "cost")
 
@@ -95,7 +97,8 @@ def get_config(args):
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate', cfg.lr_sched),
-        InferenceRunner(ds_test, NumericError("cost")),
+        # InferenceRunner(ds_test, NumericError("cost")),
+        InferenceRunner(ds_test, ClassificationError(["output", "label"], "val-classification-error")),
         LearningRateSetter(),
     ]
 
