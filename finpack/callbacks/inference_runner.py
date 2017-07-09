@@ -7,6 +7,8 @@ from .inference import Inferencer
 from ..utils import get_tqdm_kwargs
 from ..dataflow import DataFlow
 
+import pdb
+
 __all__ = ['InferenceRunner']
 
 
@@ -40,9 +42,9 @@ class InferenceRunner(Callback):
                     self.inf_summaries[inf.inf_name] = []
                 output = []
                 for var_name in inf.var_names:
-                    output.append(self.model.__dict__[var_name].data[0])
+                    output.append(self.model.__dict__[var_name].data)
                 summary_val = inf.datapoint(output)
-                self.inf_summaries[inf.inf_name].append(summary_val)
+                self.inf_summaries[inf.inf_name].extend(summary_val)
 
         for name, values in self.inf_summaries.items():
             self.trainer.monitors.put_scalar(name, np.mean(values))
