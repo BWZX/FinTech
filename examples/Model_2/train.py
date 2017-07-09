@@ -18,9 +18,9 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.conv1 = nn.Conv1d(4, 16, 5)
         self.conv2 = nn.Conv1d(16, 16, 5)
-        self.conv3 = nn.Conv1d(16, 32, 5)
+        # self.conv3 = nn.Conv1d(16, 32, 5)
 
-        self.fc1 = nn.Linear(32 * 8, 32)
+        self.fc1 = nn.Linear(16 * 12, 32)
         self.fc2 = nn.Linear(32, 2)
 
         self.leaky_relu = nn.LeakyReLU(0.1)
@@ -29,8 +29,8 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.leaky_relu(self.conv1(x))
         x = self.leaky_relu(self.conv2(x))
-        x = self.leaky_relu(self.conv3(x))
-        x = x.view(-1, 32 * 8)
+        # x = self.leaky_relu(self.conv3(x))
+        x = x.view(-1, 16 * 12)
         x = self.leaky_relu(self.fc1(x))
         x = self.fc2(x)
         return x
@@ -78,16 +78,16 @@ def get_config(args):
                             seq_len=cfg.seq_len)
 
     ds_test = StockHistory(stock_list[:20],
-                           start="2010-01-01",
-                           end="2016-12-31",
+                           start="2017-01-01",
+                           end="2017-5-31",
                            pred_column="close",
                            seq_len=cfg.seq_len)
 
     augmentors = [
-        # augs.GaussianNoise()
+        augs.GaussianNoise(0.1)
     ]
 
-    # ds_train = AugmentData(ds_train, augmentors)
+    ds_train = AugmentData(ds_train, augmentors)
 
     ds_train = BatchData(ds_train, int(args.batch_size))
     ds_test = BatchData(ds_test, int(args.batch_size))
@@ -95,7 +95,7 @@ def get_config(args):
     callbacks = [
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate', cfg.lr_sched),
-        InferenceRunner(ds_train, NumericError("cost")),
+        InferenceRunner(ds_test, NumericError("cost")),
         LearningRateSetter(),
     ]
 
