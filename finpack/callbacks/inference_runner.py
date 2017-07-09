@@ -38,9 +38,10 @@ class InferenceRunner(Callback):
             for inf in self.infs:
                 if inf.inf_name not in self.inf_summaries.keys():
                     self.inf_summaries[inf.inf_name] = []
-                if isinstance(self.model.__dict__[inf.var_name], Variable):
-                    variable = self.model.__dict__[inf.var_name].data[0]
-                summary_val = inf.datapoint(variable)
+                output = []
+                for var_name in inf.var_names:
+                    output.append(self.model.__dict__[var_name].data[0])
+                summary_val = inf.datapoint(output)
                 self.inf_summaries[inf.inf_name].append(summary_val)
 
         for name, values in self.inf_summaries.items():

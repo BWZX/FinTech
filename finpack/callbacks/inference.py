@@ -6,13 +6,13 @@ import pdb
 __all__ = ['NumericError']
 
 class Inferencer:
-    def __init__(self, var_name, inf_name=None):
-        if not isinstance(var_name, list):
-            self.var_name = [var_name]
+    def __init__(self, var_names, inf_name=None):
+        if not isinstance(var_names, list):
+            self.var_names = [var_names]
         else:
-            self.var_name = var_name
+            self.var_names = var_namse
         if inf_name == None:
-            self.inf_name = "val-" + self.var_name.join(',')
+            self.inf_name = "val-" + self.var_names.join(',')
         else:
             self.inf_name = inf_name
 
@@ -24,7 +24,7 @@ class Inferencer:
 
 class NumericError(Inferencer):
     def _datapoint(self, output):
-        return output
+        return output[0]
 
 class ClassificationError(Inferencer):
     def _datapoint(self, output):
