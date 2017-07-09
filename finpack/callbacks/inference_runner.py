@@ -47,4 +47,4 @@ class InferenceRunner(Callback):
         self.clear_summaries()
 
     def clear_summaries(self):
-        self.summaries = { }
+        self.inf_summaries = { }
