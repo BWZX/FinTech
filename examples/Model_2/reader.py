@@ -57,7 +57,7 @@ class StockHistory(RNGDataFlow):
 
             for step in range(length - seq_len - 1):
                 cur_input = input_data[step: step + seq_len]
-                # cur_input = np.random.rand(25, 4)
+                cur_input = np.transpose(cur_input, (1, 0))
                 if label_data[step + seq_len] > label_data[step + seq_len - 1]:
                     cur_label = 1
                 else:
@@ -74,8 +74,8 @@ class StockHistory(RNGDataFlow):
                 self.input_list.append(cur_input)
                 self.label_list.append(cur_label)
 
-                if len(self.input_list) >= 500:
-                    break
+                # if len(self.input_list) >= 500:
+                #     break
 
     def size(self):
         return len(self.input_list)
