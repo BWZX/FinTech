@@ -11,6 +11,8 @@ from finpack.utils import logger
 from reader import StockHistory
 from cfgs.config import cfg
 
+from dataio import dataio
+
 import pdb
 
 class Net(nn.Module):
@@ -21,6 +23,7 @@ class Net(nn.Module):
         self.conv3 = nn.Conv1d(16, 32, 5)
 
         self.fc1 = nn.Linear(32 * 8, 32)
+        # self.fc1 = nn.Linear(16 * 12, 32)
         self.fc2 = nn.Linear(32, 2)
 
         self.leaky_relu = nn.LeakyReLU(0.1)
@@ -31,6 +34,7 @@ class Net(nn.Module):
         x = self.leaky_relu(self.conv2(x))
         x = self.leaky_relu(self.conv3(x))
         x = x.view(-1, 32 * 8)
+        # x = x.view(-1, 16 * 12)
         x = self.leaky_relu(self.fc1(x))
         x = self.fc2(x)
         return x
@@ -70,16 +74,16 @@ class Model(ModelDesc):
         self.module.eval()
 
 def get_config(args):
-    stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
-    # stock_list = ["600000"]
+    # stock_list = ts.get_hs300s()['code'].as_matrix().tolist()
+    stock_list = list(dataio.get_classified(['石油行业']).keys())
 
-    ds_train = StockHistory(stock_list[:20],
+    ds_train = StockHistory(stock_list,
                             start="2010-01-01",
                             end="2016-12-31",
                             pred_column="close",
                             seq_len=cfg.seq_len)
 
-    ds_test = StockHistory(stock_list[:20],
+    ds_test = StockHistory(stock_list,
                            start="2017-01-01",
                            end="2017-5-31",
                            pred_column="close",
@@ -98,7 +102,7 @@ def get_config(args):
         PeriodicTrigger(ModelSaver(), every_k_epochs=3),
         ScheduledHyperParamSetter('learning_rate', cfg.lr_sched),
         # InferenceRunner(ds_test, NumericError("cost")),
-        InferenceRunner(ds_train, ClassificationError(["output", "label"], "val-classification-error")),
+        InferenceRunner(ds_test, ClassificationError(["output", "label"], "val-classification-error")),
         LearningRateSetter(),
     ]
 
